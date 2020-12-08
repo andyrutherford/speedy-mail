@@ -5,17 +5,17 @@ import { useQuery, QueryCache, ReactQueryCacheProvider } from 'react-query';
 import EmailForm from './EmailForm';
 import Inbox from './Inbox';
 
-import { API_ENDPOINT, fetchJson } from '../utils/index';
+import { getRandomAddress } from '../utils/index';
 
 const Home: React.FC<RouteComponentProps> = (props) => {
   const [newAddress, setNewAddress] = useState(true);
 
   const { isLoading, error, data } = useQuery(
     'emailAddress',
-    () => fetchJson(API_ENDPOINT.genRandomAddress),
+    () => getRandomAddress(),
     { enabled: newAddress }
   );
-  const emailAddress = data;
+  // setAddress(data);
 
   useEffect(() => {
     setNewAddress(false);
@@ -26,12 +26,12 @@ const Home: React.FC<RouteComponentProps> = (props) => {
   };
 
   if (isLoading) return <>'Loading...'</>;
-  if (error) return <>'An error has occurred: ' + error</>;
+  if (error) return <>{error}</>;
   return (
     <div>
       <EmailForm address={data} getNewAddress={newAddressHandler} />
-      <Inbox />
-      {data}
+      {data && <Inbox address={data[0]} />}
+      {/* {console.log(typeof data[0])} */}
     </div>
   );
 };
