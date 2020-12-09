@@ -25,13 +25,12 @@ const Home: React.FC<RouteComponentProps> = (props) => {
     setNewAddress(true);
   };
 
-  if (isLoading) return <>'Loading...'</>;
+  if (isLoading) return <>Loading...</>;
   if (error) return <>{error}</>;
   return (
     <div>
       <EmailForm address={data} getNewAddress={newAddressHandler} />
       {data && <Inbox address={data[0]} />}
-      {/* {console.log(typeof data[0])} */}
     </div>
   );
 };

@@ -29,3 +29,14 @@ export const getInbox = async (username, domain) => {
   const json = await response.json();
   return json;
 };
+
+export const getMessage = async (username, domain, id) => {
+  const response = await fetch(
+    `${API_ENDPOINT}/?action=readMessage&login=${username}&domain=${domain}&id=${id}`
+  );
+  if (!response.ok) {
+    throw new Error(`HttpError: ${response.status} ${response.statusText}`);
+  }
+  const json = await response.json();
+  return json;
+};
