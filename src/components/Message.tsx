@@ -3,6 +3,7 @@ import parse from 'html-react-parser';
 
 import { getMessage, getAttachment } from '../utils';
 import { Attachment } from '../types';
+import { Button } from '@material-ui/core';
 
 type Props = {
   address: string;
@@ -15,63 +16,50 @@ const Message: React.FC<Props> = ({ address, id, closeMessage }) => {
     getMessage(address.split('@')[0], address.split('@')[1], id)
   );
 
-  // const data = {
-  //   attachments: [],
-  //   body: 'Testetstetsetsetstset',
-  //   date: '2020-12-09 10:21:37',
-  //   from: 'andrewtr89@gmail.com',
-  //   id: 98888975,
-  //   subject: 'Test',
-  //   textBody: 'Testetstetsetsetstset',
-  //   htmlBody: '<p>testestetsetssetsetsetsetset</p>',
-  // };
-
   if (isLoading) return <h1>Loading message</h1>;
 
-  if (error) return <h1>Error fetching message</h1>;
+  if (error) return <h1>Error fetching message.</h1>;
 
   return (
     <>
-      <div>
-        <button onClick={() => closeMessage()}>Close</button>
-        {data && (
-          <>
-            <h2>{data.subject ? data.subject : 'No subject'}</h2>
-            <p>From: {data.from}</p>
-            <p>Received: {data.date}</p>
-            {data.attachments.length > 0 && (
-              <>
-                <hr />
-                <h2>Attachments ({data.attachments.length})</h2>
-                <ul>
-                  {data.attachments.map((attachment: Attachment) => (
-                    <li key={attachment.filename}>
-                      <a
-                        href={getAttachment(
-                          address.split('@')[0],
-                          address.split('@')[1],
-                          id,
-                          attachment.filename
-                        )}
-                      >
-                        {attachment.filename}
-                      </a>{' '}
-                      ({attachment.size} bytes)
-                    </li>
-                  ))}
-                </ul>
-              </>
-            )}
+      <Button onClick={() => closeMessage()}>Close</Button>
+      {data && (
+        <>
+          <h2>{data.subject ? data.subject : 'No subject'}</h2>
+          <p>From: {data.from}</p>
+          <p>Received: {data.date}</p>
+          {data.attachments.length > 0 && (
+            <>
+              <hr />
+              <h2>Attachments ({data.attachments.length})</h2>
+              <ul>
+                {data.attachments.map((attachment: Attachment) => (
+                  <li key={attachment.filename}>
+                    <a
+                      href={getAttachment(
+                        address.split('@')[0],
+                        address.split('@')[1],
+                        id,
+                        attachment.filename
+                      )}
+                    >
+                      {attachment.filename}
+                    </a>
+                    ({attachment.size} bytes)
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
 
-            <hr />
-            {data.htmlBody.length > 0
-              ? parse(data.htmlBody)
-              : data.textBody
-              ? data.textBody
-              : 'This message does not contain any content.'}
-          </>
-        )}
-      </div>
+          <hr />
+          {data.htmlBody.length > 0
+            ? parse(data.htmlBody)
+            : data.textBody
+            ? data.textBody
+            : 'This message does not contain any content.'}
+        </>
+      )}
     </>
   );
 };

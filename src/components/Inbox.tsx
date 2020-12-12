@@ -38,15 +38,6 @@ const Inbox: React.FC<Props> = ({ address, selectMessage }) => {
     { refetchInterval: 3000 }
   );
 
-  // const data = [
-  //   {
-  //     id: 123456,
-  //     from: 'mail@mail.com',
-  //     subject: 'super cool message',
-  //     date: '1/1/2020',
-  //   },
-  // ];
-
   if (error) return <h1>An error occurred. Please try again.</h1>;
 
   return (
@@ -81,7 +72,7 @@ const Inbox: React.FC<Props> = ({ address, selectMessage }) => {
         {data && data.length < 1 && (
           <>
             <h1>Your inbox is empty.</h1>
-            <p>Waiting for incoming emails</p>
+            <p>Waiting for incoming emails...</p>
           </>
         )}
       </TableContainer>

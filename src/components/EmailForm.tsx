@@ -11,6 +11,7 @@ import FormControl from '@material-ui/core/FormControl';
 import EmailFormWrapper from './EmailForm.styles';
 
 import { API_DOMAINS, RESTRICTED_WORDS } from '../utils';
+import { IconButton } from '@material-ui/core';
 
 type Props = {
   address: string;
@@ -43,19 +44,22 @@ const EmailForm: React.FC<Props> = ({
 
   const deleteAddressHandler = () => {
     if (window.confirm('This action is irreversible.  Are you sure?')) {
-      console.log('delete email');
       newAddressHandler();
     }
   };
 
   const customAddressHandler = () => {
-    if (RESTRICTED_WORDS.includes(customEmail.address)) {
-      alert('bad words');
+    if (customEmail.address.length < 5) {
+      return alert('Your custom address must be atleast 5 characters.');
+    } else if (RESTRICTED_WORDS.includes(customEmail.address)) {
+      return alert(
+        'Your custom address cannot use any of the restricted words.'
+      );
     } else {
       setEmailAddress(customEmail.address + '@' + customEmail.domain);
       setToggleCustomEmail(false);
       customAddress(customEmail.address + '@' + customEmail.domain);
-      alert('ok');
+      alert('Your custom address is saved.');
     }
   };
 
@@ -68,78 +72,71 @@ const EmailForm: React.FC<Props> = ({
     <EmailFormWrapper>
       <h1>Your temporary email address</h1>
       {toggleCustomEmail ? (
-        <form noValidate autoComplete='off'>
-          <TextField
-            id='outlined-basic'
-            variant='outlined'
-            value={customEmail.address}
-            onChange={(e) =>
-              setCustomEmail({ ...customEmail, address: e.target.value })
-            }
-          />
-          {' @ '}
-          <FormControl>
-            <Select
-              labelId='domain'
-              id='outlined-basic'
+        <>
+          <form noValidate autoComplete='off'>
+            <TextField
+              id='random-address'
+              variant='outlined'
+              value={customEmail.address}
               onChange={(e) =>
-                setCustomEmail({ ...customEmail, domain: e.target.value })
+                setCustomEmail({ ...customEmail, address: e.target.value })
               }
-              value={customEmail.domain}
-            >
-              {API_DOMAINS.map((domain) => (
-                <MenuItem key={domain} value={domain}>
-                  {domain}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <Button
-            size='large'
-            variant='contained'
-            color='primary'
-            onClick={customAddressHandler}
-          >
-            Save
-          </Button>
-          <Tooltip
-            title={copyTooltipText}
-            placement='right'
-            onClose={() => setTimeout(() => setCopyTooltipText('Copy'), 100)}
-          >
+            />
+            {' @ '}
+            <FormControl>
+              <Select
+                labelId='domain'
+                id='address-domain'
+                onChange={(e) =>
+                  setCustomEmail({ ...customEmail, domain: e.target.value })
+                }
+                value={customEmail.domain}
+              >
+                {API_DOMAINS.map((domain) => (
+                  <MenuItem key={domain} value={domain}>
+                    {domain}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
             <Button
               size='large'
               variant='contained'
               color='primary'
-              onClick={copyAddressHandler}
-              startIcon={<FileCopyIcon />}
-            />
-          </Tooltip>
+              onClick={customAddressHandler}
+            >
+              Save
+            </Button>
+          </form>
           <p>Restricted words: {RESTRICTED_WORDS.join(', ')}</p>
-        </form>
+        </>
       ) : (
         <form noValidate autoComplete='off'>
           <TextField
             id='outlined-basic'
             variant='outlined'
             value={emailAddress}
-          />
+          ></TextField>
           <Tooltip
             title={copyTooltipText}
             placement='right'
             onClose={() => setTimeout(() => setCopyTooltipText('Copy'), 100)}
           >
-            <Button
-              size='large'
-              variant='contained'
+            <IconButton
+              className='copy-button'
               color='primary'
               onClick={copyAddressHandler}
-              startIcon={<FileCopyIcon />}
-            />
+            >
+              <FileCopyIcon />
+            </IconButton>
           </Tooltip>
         </form>
       )}
-      <ButtonGroup color='primary' aria-label='outlined primary button group'>
+      <ButtonGroup
+        className='form-actions'
+        color='primary'
+        aria-label='outlined primary button group'
+      >
         <Button onClick={newAddressHandler}>New Email Address</Button>
         <Button onClick={() => setToggleCustomEmail(!toggleCustomEmail)}>
           Custom Address
