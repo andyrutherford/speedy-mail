@@ -10,6 +10,15 @@ export const API_DOMAINS = [
   'wwjmp.com',
 ];
 
+export const RESTRICTED_WORDS = [
+  'abuse',
+  'webmaster',
+  'contact',
+  'postmaster',
+  'hostmaster',
+  'admin',
+];
+
 export const getRandomAddress = async (): Promise<string> => {
   const response = await fetch(`${API_ENDPOINT}/?action=genRandomMailbox`);
   if (!response.ok) {

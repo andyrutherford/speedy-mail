@@ -1,9 +1,7 @@
-import { useState, useEffect } from 'react';
 import { useQuery } from 'react-query';
+import parse from 'html-react-parser';
 
 import { getMessage } from '../utils';
-
-import parse from 'html-react-parser';
 
 type Props = {
   address: string;
@@ -12,24 +10,9 @@ type Props = {
 };
 
 const Message: React.FC<Props> = ({ address, id, closeMessage }) => {
-  const [showMessage, setShowMessage] = useState<boolean>(true);
-  console.log(address, id);
   const { isLoading, error, data } = useQuery(['message', id], () =>
     getMessage(address.split('@')[0], address.split('@')[1], id)
   );
-
-  // const [data, setData] = useState<any>();
-  // useEffect(() => {
-  //   const fetch = async () => {
-  //     const res = await getMessage(
-  //       address.split('@')[0],
-  //       address.split('@')[1],
-  //       id
-  //     );
-  //     setData(res);
-  //   };
-  //   fetch();
-  // });
 
   // const data = {
   //   attachments: [],
@@ -48,24 +31,22 @@ const Message: React.FC<Props> = ({ address, id, closeMessage }) => {
 
   return (
     <>
-      {showMessage && (
-        <div>
-          <button onClick={() => closeMessage()}>Close</button>
-          {data && (
-            <>
-              <h2>{data.subject}</h2>
-              <p>From: {data.from}</p>
-              <p>Received: {data.date}</p>
-              <hr />
-              <div>
-                {data.htmlBody.length > 0
-                  ? parse(data.htmlBody)
-                  : data.textBody}
-              </div>
-            </>
-          )}
-        </div>
-      )}
+      <div>
+        <button onClick={() => closeMessage()}>Close</button>
+        {data && (
+          <>
+            <h2>{data.subject ? data.subject : 'No subject'}</h2>
+            <p>From: {data.from}</p>
+            <p>Received: {data.date}</p>
+            <hr />
+            {data.htmlBody.length > 0
+              ? parse(data.htmlBody)
+              : data.textBody
+              ? data.textBody
+              : 'This message does not contain any content.'}
+          </>
+        )}
+      </div>
     </>
   );
 };

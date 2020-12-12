@@ -47,7 +47,7 @@ const Inbox: React.FC<Props> = ({ address, selectMessage }) => {
   //   },
   // ];
 
-  // if (error) return <h1>An error occurred.</h1>;
+  if (error) return <h1>An error occurred. Please try again.</h1>;
 
   return (
     <>
@@ -72,13 +72,18 @@ const Inbox: React.FC<Props> = ({ address, selectMessage }) => {
                   <TableCell component='th' scope='row'>
                     {r.from}
                   </TableCell>
-                  <TableCell>{r.subject}</TableCell>
+                  <TableCell>{r.subject ? r.subject : 'No subject'}</TableCell>
                   <TableCell>{r.date}</TableCell>
                 </TableRow>
               ))}
           </TableBody>
         </Table>
-        {data && data.length < 1 && <h1>Your inbox is empty.</h1>}
+        {data && data.length < 1 && (
+          <>
+            <h1>Your inbox is empty.</h1>
+            <p>Waiting for incoming emails</p>
+          </>
+        )}
       </TableContainer>
     </>
   );

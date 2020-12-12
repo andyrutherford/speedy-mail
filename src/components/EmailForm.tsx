@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
@@ -11,34 +10,26 @@ import FormControl from '@material-ui/core/FormControl';
 
 import EmailFormWrapper from './EmailForm.styles';
 
-import { API_DOMAINS } from '../utils';
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    '& > input': {
-      margin: theme.spacing(1),
-      width: '20ch',
-    },
-  },
-  formControl: {
-    margin: theme.spacing(1),
-    minWidth: 120,
-  },
-}));
+import { API_DOMAINS, RESTRICTED_WORDS } from '../utils';
 
 type Props = {
-  address?: string;
+  address: string;
   getNewAddress: () => void;
+  customAddress: (address: string) => void;
 };
 
-const EmailForm: React.FC<Props> = ({ address, getNewAddress }) => {
-  const classes = useStyles();
-  const [emailAddress, setEmailAddress] = useState<string | undefined>(address);
+const EmailForm: React.FC<Props> = ({
+  address,
+  getNewAddress,
+  customAddress,
+}) => {
+  const [emailAddress, setEmailAddress] = useState<string>(address);
   const [toggleCustomEmail, setToggleCustomEmail] = useState<boolean>(false);
   const [customEmail, setCustomEmail] = useState<{
     address: string;
     domain: any;
   }>({ address: '', domain: API_DOMAINS[0] });
+  const [copyTooltipText, setCopyTooltipText] = useState<string>('Copy');
 
   useEffect(() => {
     setEmailAddress(address);
@@ -46,6 +37,7 @@ const EmailForm: React.FC<Props> = ({ address, getNewAddress }) => {
 
   const newAddressHandler = () => {
     getNewAddress();
+    setCustomEmail({ address: '', domain: API_DOMAINS[0] });
     setTimeout(() => setToggleCustomEmail(false), 200);
   };
 
@@ -56,11 +48,27 @@ const EmailForm: React.FC<Props> = ({ address, getNewAddress }) => {
     }
   };
 
+  const customAddressHandler = () => {
+    if (RESTRICTED_WORDS.includes(customEmail.address)) {
+      alert('bad words');
+    } else {
+      setEmailAddress(customEmail.address + '@' + customEmail.domain);
+      setToggleCustomEmail(false);
+      customAddress(customEmail.address + '@' + customEmail.domain);
+      alert('ok');
+    }
+  };
+
+  const copyAddressHandler = () => {
+    navigator.clipboard.writeText(emailAddress);
+    setCopyTooltipText('Copied!');
+  };
+
   return (
     <EmailFormWrapper>
-      <h1>Your email address</h1>
+      <h1>Your temporary email address</h1>
       {toggleCustomEmail ? (
-        <form className={classes.root} noValidate autoComplete='off'>
+        <form noValidate autoComplete='off'>
           <TextField
             id='outlined-basic'
             variant='outlined'
@@ -70,7 +78,7 @@ const EmailForm: React.FC<Props> = ({ address, getNewAddress }) => {
             }
           />
           {' @ '}
-          <FormControl className={classes.formControl}>
+          <FormControl>
             <Select
               labelId='domain'
               id='outlined-basic'
@@ -86,27 +94,46 @@ const EmailForm: React.FC<Props> = ({ address, getNewAddress }) => {
               ))}
             </Select>
           </FormControl>
-          <Tooltip title='Copy' placement='right'>
+          <Button
+            size='large'
+            variant='contained'
+            color='primary'
+            onClick={customAddressHandler}
+          >
+            Save
+          </Button>
+          <Tooltip
+            title={copyTooltipText}
+            placement='right'
+            onClose={() => setTimeout(() => setCopyTooltipText('Copy'), 100)}
+          >
             <Button
               size='large'
               variant='contained'
               color='primary'
+              onClick={copyAddressHandler}
               startIcon={<FileCopyIcon />}
             />
           </Tooltip>
+          <p>Restricted words: {RESTRICTED_WORDS.join(', ')}</p>
         </form>
       ) : (
-        <form className={classes.root} noValidate autoComplete='off'>
+        <form noValidate autoComplete='off'>
           <TextField
             id='outlined-basic'
             variant='outlined'
             value={emailAddress}
           />
-          <Tooltip title='Copy' placement='right'>
+          <Tooltip
+            title={copyTooltipText}
+            placement='right'
+            onClose={() => setTimeout(() => setCopyTooltipText('Copy'), 100)}
+          >
             <Button
               size='large'
               variant='contained'
               color='primary'
+              onClick={copyAddressHandler}
               startIcon={<FileCopyIcon />}
             />
           </Tooltip>

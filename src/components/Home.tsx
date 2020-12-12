@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
-import { RouteComponentProps } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
-import { useQuery, QueryCache, ReactQueryCacheProvider } from 'react-query';
+import { useQuery } from 'react-query';
 
 import EmailForm from './EmailForm';
 import Inbox from './Inbox';
@@ -13,13 +11,13 @@ const Home: React.FC = () => {
   const [newAddress, setNewAddress] = useState(true);
   const [selectedMessage, setSelectedMessage] = useState<string>('');
   const [showMessage, setShowMessage] = useState<boolean>(false);
+  const [customAddress, setCustomAddress] = useState<string | undefined>();
 
   const { isLoading, error, data } = useQuery(
     'emailAddress',
     () => getRandomAddress(),
     { enabled: newAddress }
   );
-  // setAddress(data);
 
   useEffect(() => {
     setNewAddress(false);
@@ -27,27 +25,39 @@ const Home: React.FC = () => {
 
   const newAddressHandler = () => {
     setNewAddress(true);
+    setShowMessage(false);
+    setCustomAddress(undefined);
   };
 
   const selectMessageHandler = (id: string) => {
-    console.log(id);
     setSelectedMessage(id);
     setShowMessage(true);
   };
 
-  const closeMessageHandler = () => {
-    setShowMessage(false);
-  };
+  const closeMessageHandler = () => setShowMessage(false);
+
+  const customAddressHandler = (address: string) => setCustomAddress(address);
 
   if (isLoading) return <>Loading...</>;
   if (error) return <>{error}</>;
   return (
     <div>
-      <EmailForm address={data} getNewAddress={newAddressHandler} />
-      {data && <Inbox address={data} selectMessage={selectMessageHandler} />}
+      {data && (
+        <EmailForm
+          address={data}
+          getNewAddress={newAddressHandler}
+          customAddress={customAddressHandler}
+        />
+      )}
+      {data && (
+        <Inbox
+          address={customAddress || data}
+          selectMessage={selectMessageHandler}
+        />
+      )}
       {data && selectedMessage && showMessage && (
         <Message
-          address={data}
+          address={customAddress || data}
           id={selectedMessage}
           closeMessage={closeMessageHandler}
         />
