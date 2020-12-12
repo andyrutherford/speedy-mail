@@ -57,3 +57,11 @@ export const getMessage = async (
   const json = await response.json();
   return json as Message;
 };
+
+export const getAttachment = (
+  username: string,
+  domain: string,
+  id: string,
+  filename: string
+): string =>
+  `${API_ENDPOINT}/?action=download&login=${username}&domain=${domain}&id=${id}&file=${filename}`;

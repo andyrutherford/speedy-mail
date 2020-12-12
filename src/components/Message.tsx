@@ -1,7 +1,8 @@
 import { useQuery } from 'react-query';
 import parse from 'html-react-parser';
 
-import { getMessage } from '../utils';
+import { getMessage, getAttachment } from '../utils';
+import { Attachment } from '../types';
 
 type Props = {
   address: string;
@@ -38,6 +39,30 @@ const Message: React.FC<Props> = ({ address, id, closeMessage }) => {
             <h2>{data.subject ? data.subject : 'No subject'}</h2>
             <p>From: {data.from}</p>
             <p>Received: {data.date}</p>
+            {data.attachments.length > 0 && (
+              <>
+                <hr />
+                <h2>Attachments ({data.attachments.length})</h2>
+                <ul>
+                  {data.attachments.map((attachment: Attachment) => (
+                    <li key={attachment.filename}>
+                      <a
+                        href={getAttachment(
+                          address.split('@')[0],
+                          address.split('@')[1],
+                          id,
+                          attachment.filename
+                        )}
+                      >
+                        {attachment.filename}
+                      </a>{' '}
+                      ({attachment.size} bytes)
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+
             <hr />
             {data.htmlBody.length > 0
               ? parse(data.htmlBody)
