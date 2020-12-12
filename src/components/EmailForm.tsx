@@ -7,7 +7,6 @@ import FileCopyIcon from '@material-ui/icons/FileCopy';
 import Tooltip from '@material-ui/core/Tooltip';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
-import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 
 import EmailFormWrapper from './EmailForm.styles';
@@ -28,13 +27,13 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 type Props = {
-  address: string;
+  address?: string;
   getNewAddress: () => void;
 };
 
 const EmailForm: React.FC<Props> = ({ address, getNewAddress }) => {
   const classes = useStyles();
-  const [emailAddress, setEmailAddress] = useState<string>(address);
+  const [emailAddress, setEmailAddress] = useState<string | undefined>(address);
   const [toggleCustomEmail, setToggleCustomEmail] = useState<boolean>(false);
   const [customEmail, setCustomEmail] = useState<{
     address: string;

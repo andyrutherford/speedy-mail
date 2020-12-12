@@ -8,6 +8,7 @@ import {
 
 import './App.css';
 import Home from './components/Home';
+import Message from './components/Message';
 import Navbar from './components/Navbar';
 
 function App() {

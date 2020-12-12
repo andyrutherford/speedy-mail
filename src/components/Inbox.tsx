@@ -9,13 +9,12 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import Modal from '@material-ui/core/Modal';
 
-import Message from './Message';
 import { getInbox } from '../utils/index';
 
 type Props = {
   address: string;
+  selectMessage: (id: string) => void;
 };
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -31,12 +30,8 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const Inbox: React.FC<Props> = ({ address }) => {
-  const [showMessage, setShowMessage] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [selectedMessage, setSelectedMessage] = useState({});
+const Inbox: React.FC<Props> = ({ address, selectMessage }) => {
   const classes = useStyles();
-
   const { isLoading, error, data } = useQuery(
     'inbox',
     () => getInbox(address.split('@')[0], address.split('@')[1]),
@@ -54,19 +49,10 @@ const Inbox: React.FC<Props> = ({ address }) => {
 
   // if (error) return <h1>An error occurred.</h1>;
 
-  const handleOpen = (e: any, message: any) => {
-    setSelectedMessage(message);
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
   return (
     <>
       <TableContainer component={Paper}>
-        <Table aria-label='simple table'>
+        <Table aria-label='inbox'>
           <TableHead>
             <TableRow>
               <TableCell>From</TableCell>
@@ -81,7 +67,7 @@ const Inbox: React.FC<Props> = ({ address }) => {
                   hover
                   key={r.id}
                   id={r.id}
-                  onClick={(e: any) => handleOpen(e, r)}
+                  onClick={() => selectMessage(r.id)}
                 >
                   <TableCell component='th' scope='row'>
                     {r.from}
@@ -94,15 +80,6 @@ const Inbox: React.FC<Props> = ({ address }) => {
         </Table>
         {data && data.length < 1 && <h1>Your inbox is empty.</h1>}
       </TableContainer>
-
-      {open && (
-        <Message
-          open={open}
-          handleClose={handleClose}
-          address={address}
-          message={selectedMessage}
-        ></Message>
-      )}
     </>
   );
 };
