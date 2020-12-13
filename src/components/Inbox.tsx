@@ -11,6 +11,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 
 import { getInbox } from '../utils/index';
+import { InboxWrapper } from './Inbox.styles';
 
 type Props = {
   address: string;
@@ -41,7 +42,7 @@ const Inbox: React.FC<Props> = ({ address, selectMessage }) => {
   if (error) return <h1>An error occurred. Please try again.</h1>;
 
   return (
-    <>
+    <InboxWrapper>
       <TableContainer component={Paper}>
         <Table aria-label='inbox'>
           <TableHead>
@@ -63,20 +64,26 @@ const Inbox: React.FC<Props> = ({ address, selectMessage }) => {
                   <TableCell component='th' scope='row'>
                     {r.from}
                   </TableCell>
-                  <TableCell>{r.subject ? r.subject : 'No subject'}</TableCell>
+                  <TableCell>
+                    {r.subject ? (
+                      r.subject
+                    ) : (
+                      <span className='font-italic'>No subject</span>
+                    )}
+                  </TableCell>
                   <TableCell>{r.date}</TableCell>
                 </TableRow>
               ))}
           </TableBody>
         </Table>
         {data && data.length < 1 && (
-          <>
+          <div className='inbox-status'>
             <h1>Your inbox is empty.</h1>
             <p>Waiting for incoming emails...</p>
-          </>
+          </div>
         )}
       </TableContainer>
-    </>
+    </InboxWrapper>
   );
 };
 

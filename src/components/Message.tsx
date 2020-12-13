@@ -4,6 +4,7 @@ import parse from 'html-react-parser';
 import { getMessage, getAttachment } from '../utils';
 import { Attachment } from '../types';
 import { Button } from '@material-ui/core';
+import MessageWrapper from './Message.styles';
 
 type Props = {
   address: string;
@@ -21,11 +22,21 @@ const Message: React.FC<Props> = ({ address, id, closeMessage }) => {
   if (error) return <h1>Error fetching message.</h1>;
 
   return (
-    <>
-      <Button onClick={() => closeMessage()}>Close</Button>
+    <MessageWrapper>
       {data && (
         <>
-          <h2>{data.subject ? data.subject : 'No subject'}</h2>
+          <div className='message-header'>
+            <h2 className='font-italic'>
+              {data.subject ? data.subject : 'No subject'}
+            </h2>
+            <Button
+              variant='contained'
+              color='primary'
+              onClick={() => closeMessage()}
+            >
+              Close
+            </Button>
+          </div>
           <p>From: {data.from}</p>
           <p>Received: {data.date}</p>
           {data.attachments.length > 0 && (
@@ -53,14 +64,16 @@ const Message: React.FC<Props> = ({ address, id, closeMessage }) => {
           )}
 
           <hr />
-          {data.htmlBody.length > 0
-            ? parse(data.htmlBody)
-            : data.textBody
-            ? data.textBody
-            : 'This message does not contain any content.'}
+          <div className='message-body'>
+            {data.htmlBody.length > 0
+              ? parse(data.htmlBody)
+              : data.textBody
+              ? data.textBody
+              : 'This message does not contain any content.'}
+          </div>
         </>
       )}
-    </>
+    </MessageWrapper>
   );
 };
 

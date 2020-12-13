@@ -12,7 +12,7 @@ import EmailFormWrapper from './EmailForm.styles';
 
 import { API_DOMAINS, RESTRICTED_WORDS } from '../utils';
 import { IconButton } from '@material-ui/core';
-
+import CheckIcon from '@material-ui/icons/Check';
 type Props = {
   address: string;
   getNewAddress: () => void;
@@ -30,7 +30,10 @@ const EmailForm: React.FC<Props> = ({
     address: string;
     domain: any;
   }>({ address: '', domain: API_DOMAINS[0] });
-  const [copyTooltipText, setCopyTooltipText] = useState<string>('Copy');
+  const [copyTooltipText, setCopyTooltipText] = useState<string>(
+    'Copy to clipboard'
+  );
+  const [saveTooltipText, setSaveTooltipText] = useState<string>('Save');
 
   useEffect(() => {
     setEmailAddress(address);
@@ -49,17 +52,19 @@ const EmailForm: React.FC<Props> = ({
   };
 
   const customAddressHandler = () => {
-    if (customEmail.address.length < 5) {
-      return alert('Your custom address must be atleast 5 characters.');
+    if (customEmail.address.length < 5 || customEmail.address.length > 12) {
+      return alert(
+        'Your custom address must be between 5 and 12 characters in length.'
+      );
     } else if (RESTRICTED_WORDS.includes(customEmail.address)) {
       return alert(
         'Your custom address cannot use any of the restricted words.'
       );
     } else {
       setEmailAddress(customEmail.address + '@' + customEmail.domain);
-      setToggleCustomEmail(false);
       customAddress(customEmail.address + '@' + customEmail.domain);
-      alert('Your custom address is saved.');
+      setSaveTooltipText('Saved!');
+      setTimeout(() => setToggleCustomEmail(false), 1000);
     }
   };
 
@@ -73,10 +78,9 @@ const EmailForm: React.FC<Props> = ({
       <h1>Your temporary email address</h1>
       {toggleCustomEmail ? (
         <>
-          <form noValidate autoComplete='off'>
+          <form noValidate autoComplete='off' className='custom-address'>
             <TextField
-              id='random-address'
-              variant='outlined'
+              id='custom-address'
               value={customEmail.address}
               onChange={(e) =>
                 setCustomEmail({ ...customEmail, address: e.target.value })
@@ -99,28 +103,37 @@ const EmailForm: React.FC<Props> = ({
                 ))}
               </Select>
             </FormControl>
-            <Button
-              size='large'
-              variant='contained'
-              color='primary'
-              onClick={customAddressHandler}
+            <Tooltip
+              title={saveTooltipText}
+              placement='right'
+              onClose={() => setTimeout(() => setSaveTooltipText('Save'), 150)}
             >
-              Save
-            </Button>
+              <IconButton
+                color='inherit'
+                aria-label='menu'
+                onClick={customAddressHandler}
+              >
+                <CheckIcon className='save-button' color='primary' />
+              </IconButton>
+            </Tooltip>
           </form>
-          <p>Restricted words: {RESTRICTED_WORDS.join(', ')}</p>
+          <p className='subtext'>
+            Restricted words: {RESTRICTED_WORDS.join(', ')}
+          </p>
         </>
       ) : (
         <form noValidate autoComplete='off'>
           <TextField
-            id='outlined-basic'
+            id='random-address'
             variant='outlined'
             value={emailAddress}
           ></TextField>
           <Tooltip
             title={copyTooltipText}
             placement='right'
-            onClose={() => setTimeout(() => setCopyTooltipText('Copy'), 100)}
+            onClose={() =>
+              setTimeout(() => setCopyTooltipText('Copy to clipboard'), 150)
+            }
           >
             <IconButton
               className='copy-button'
