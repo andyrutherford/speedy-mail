@@ -1,7 +1,5 @@
-import { useState } from 'react';
 import { useQuery } from 'react-query';
 
-import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -18,27 +16,14 @@ type Props = {
   selectMessage: (id: string) => void;
 };
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    paper: {
-      position: 'absolute',
-      width: 400,
-      backgroundColor: theme.palette.background.paper,
-      border: '2px solid #000',
-      boxShadow: theme.shadows[5],
-      padding: theme.spacing(2, 4, 3),
-    },
-  })
-);
-
 const Inbox: React.FC<Props> = ({ address, selectMessage }) => {
-  const classes = useStyles();
   const { isLoading, error, data } = useQuery(
     'inbox',
     () => getInbox(address.split('@')[0], address.split('@')[1]),
     { refetchInterval: 3000 }
   );
 
+  if (isLoading) return <h1>Loading</h1>;
   if (error) return <h1>An error occurred. Please try again.</h1>;
 
   return (

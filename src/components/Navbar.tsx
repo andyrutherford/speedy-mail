@@ -34,7 +34,9 @@ const Navbar: React.FC = () => {
             color='inherit'
             aria-label='menu'
           >
-            <MenuIcon />
+            <a href='#!'>
+              <MenuIcon />
+            </a>
           </IconButton>
         </Toolbar>
       </AppBar>
