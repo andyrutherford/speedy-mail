@@ -8,7 +8,7 @@ import Message from './Message';
 import { getRandomAddress } from '../utils/index';
 
 const Home: React.FC = () => {
-  const [newAddress, setNewAddress] = useState(true);
+  const [newAddress, setNewAddress] = useState<boolean>(true);
   const [selectedMessage, setSelectedMessage] = useState<string>('');
   const [showMessage, setShowMessage] = useState<boolean>(false);
   const [customAddress, setCustomAddress] = useState<string | undefined>();
@@ -38,7 +38,7 @@ const Home: React.FC = () => {
 
   const customAddressHandler = (address: string) => setCustomAddress(address);
 
-  if (isLoading) return <>Loading...</>;
+  if (isLoading) return <></>;
   if (error) return <>{error}</>;
   return (
     <div>

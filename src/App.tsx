@@ -1,4 +1,3 @@
-import { ReactQueryDevtools } from 'react-query-devtools';
 import {
   BrowserRouter as Router,
   Route,
@@ -20,8 +19,6 @@ function App() {
           <Route path='/inbox' exact component={Home} />
         </Switch>
       </Router>
-
-      <ReactQueryDevtools initialIsOpen />
     </>
   );
 }
