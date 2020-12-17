@@ -30,8 +30,8 @@ const EmailFormWrapper = styled.div`
     justify-content: space-evenly;
   }
 
-  svg {
-    /* transform: scale(1.25); */
+  .custom-address span {
+    font-size: 1.5rem;
   }
 
   .subtext {

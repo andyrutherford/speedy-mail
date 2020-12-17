@@ -7,6 +7,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
+import Alert from './Alert';
 
 import EmailFormWrapper from './EmailForm.styles';
 
@@ -34,10 +35,20 @@ const EmailForm: React.FC<Props> = ({
     'Copy to clipboard'
   );
   const [saveTooltipText, setSaveTooltipText] = useState<string>('Save');
+  const [alertText, setAlertText] = useState<string | null>('');
 
   useEffect(() => {
     setEmailAddress(address);
   }, [address]);
+
+  // Clear alert after 3 seconds.
+  useEffect(() => {
+    if (alertText) {
+      setTimeout(() => {
+        setAlertText(null);
+      }, 4000);
+    }
+  }, [alertText]);
 
   const newAddressHandler = () => {
     getNewAddress();
@@ -52,12 +63,13 @@ const EmailForm: React.FC<Props> = ({
   };
 
   const customAddressHandler = () => {
+    setAlertText(null);
     if (customEmail.address.length < 5 || customEmail.address.length > 12) {
-      return alert(
+      return setAlertText(
         'Your custom address must be between 5 and 12 characters in length.'
       );
     } else if (RESTRICTED_WORDS.includes(customEmail.address)) {
-      return alert(
+      return setAlertText(
         'Your custom address cannot use any of the restricted words.'
       );
     } else {
@@ -86,7 +98,7 @@ const EmailForm: React.FC<Props> = ({
                 setCustomEmail({ ...customEmail, address: e.target.value })
               }
             />
-            {' @ '}
+            <span> @ </span>
             <FormControl>
               <Select
                 labelId='domain'
@@ -156,6 +168,7 @@ const EmailForm: React.FC<Props> = ({
         </Button>
         <Button onClick={deleteAddressHandler}>Delete Forever</Button>
       </ButtonGroup>
+      {alertText && <Alert type='danger' text={alertText} />}
     </EmailFormWrapper>
   );
 };
