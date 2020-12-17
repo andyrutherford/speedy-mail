@@ -1,4 +1,11 @@
 import { useState, useEffect } from 'react';
+
+import Alert from './Alert';
+
+import EmailFormWrapper from './EmailForm.styles';
+
+import { API_DOMAINS, RESTRICTED_WORDS } from '../utils';
+
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
@@ -7,13 +14,9 @@ import Tooltip from '@material-ui/core/Tooltip';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
-import Alert from './Alert';
-
-import EmailFormWrapper from './EmailForm.styles';
-
-import { API_DOMAINS, RESTRICTED_WORDS } from '../utils';
 import { IconButton } from '@material-ui/core';
 import CheckIcon from '@material-ui/icons/Check';
+
 type Props = {
   address: string;
   getNewAddress: () => void;
